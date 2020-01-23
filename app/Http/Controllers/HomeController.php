@@ -27,4 +27,30 @@ class HomeController extends Controller
             'contents' => $filesystem->listContents()
         ]);
     }
+
+    /**
+     * stream file to browser
+     *
+     * @param  Request  $request
+     * @param  queryString  $fileName
+     * @return response()->streamDownload
+     */
+    public function fileDownload(Request $request)
+    {
+        $client = new S3Client([
+            'credentials' => [
+                'key'    => '',
+                'secret' => '',
+            ],
+            'region' => 'us-east-2',
+            'version' => 'latest',
+        ]);
+        $fileName = $request->query('fileName');
+        $adapter = new AwsS3Adapter($client, 'dev-local-s3fs');
+        $filesystem = new Filesystem($adapter);
+        $contents = $filesystem->read($fileName);
+        return response()->streamDownload(function() use ($contents){
+            echo $contents;
+        }, $fileName);
+    }
 }

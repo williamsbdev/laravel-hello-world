@@ -17,4 +17,5 @@ Route::get('/', function () {
 
 Route::group([], function () {
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/fileDownload', 'HomeController@fileDownload')->name('fileDownload');
 });
